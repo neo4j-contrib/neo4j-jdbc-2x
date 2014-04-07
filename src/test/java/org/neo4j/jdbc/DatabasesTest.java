@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
-import org.neo4j.jdbc.embedded.EmbeddedDatabases;
+import org.neo4j.jdbc.internal.embedded.EmbeddedDatabases;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.kernel.EmbeddedReadOnlyGraphDatabase;
 import org.neo4j.kernel.impl.util.FileUtils;

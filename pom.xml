@@ -16,11 +16,11 @@
 
     <packaging>jar</packaging>
 
-      <scm>
+    <scm>
         <connection>scm:git:git://github.com/neo4j-contrib/neo4j-jdbc.git</connection>
         <developerConnection>scm:git:git@github.com:neo4j-contrib/neo4j-jdbc.git</developerConnection>
         <url>https://github.com/neo4j-contrib/neo4j-jdbc</url>
-      </scm>
+    </scm>
 
     <licenses>
         <license>
@@ -166,6 +166,17 @@
                 </configuration>
             </plugin>
             <plugin>
+              <artifactId>maven-failsafe-plugin</artifactId>
+              <executions>
+                <execution>
+                  <goals>
+                    <goal>integration-test</goal>
+                    <goal>verify</goal>
+                  </goals>
+                </execution>
+              </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
 
                 <configuration>
@@ -190,28 +201,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <!--
-                  <plugin>
-                      <artifactId>maven-assembly-plugin</artifactId>
-                      <executions>
-                          <execution>
-                              <id>docs-assembly</id>
-                              <phase>package</phase>
-                              <configuration>
-                                  <attach>true</attach>
-                                  <appendAssemblyId>true</appendAssemblyId>
-                                  <descriptors>
-                                      <descriptor>src/main/assemblies/docs-assembly.xml</descriptor>
-                                  </descriptors>
-                              </configuration>
-                              <goals>
-                                  <goal>single</goal>
-                              </goals>
-                          </execution>
-                      </executions>
-                  </plugin>
-            -->
         </plugins>
     </build>
 

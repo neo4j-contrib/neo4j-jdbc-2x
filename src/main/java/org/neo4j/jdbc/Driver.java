@@ -29,15 +29,25 @@ import java.util.logging.Logger;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.neo4j.jdbc.internal.Connections;
+import org.neo4j.jdbc.internal.Databases;
+import org.neo4j.jdbc.internal.DriverQueries;
+import org.neo4j.jdbc.internal.Neo4jConnection;
+import org.neo4j.jdbc.internal.QueryExecutor;
+import org.neo4j.jdbc.internal.util.Uris;
 
 /**
- * JDBC Driver implementation that is backed by a REST Neo4j Server.
+ * Neo4j JDBC driver.
  */
 public class Driver implements java.sql.Driver
 {
-
-    private final static Log log = LogFactory.getLog( Driver.class );
     public static final String CON_PREFIX = "jdbc:neo4j:";
+    public static final String URL_PREFIX = "jdbc:neo4j";
+    public static final String LEGACY = "legacy";
+    public static final String PASSWORD = "password";
+    public static final String USER = "user";
+
+    private static final Log log = LogFactory.getLog( Driver.class );
 
     static
     {
@@ -51,12 +61,8 @@ public class Driver implements java.sql.Driver
         }
     }
 
-    static final String LEGACY = "legacy";
-    static final String URL_PREFIX = "jdbc:neo4j";
-    static final String PASSWORD = "password";
-    static final String USER = "user";
-
-    DriverQueries queries;
+    private final DriverQueries queries;
+    private final Databases databases = createDatabases();
 
     public Driver()
     {
@@ -69,7 +75,7 @@ public class Driver implements java.sql.Driver
         {
             return null;
         }
-        parseUrlProperties( url, properties );
+        Uris.parseUrlProperties( url, properties );
 
         return Connections.create( this, url, properties );
     }
@@ -94,16 +100,19 @@ public class Driver implements java.sql.Driver
         return new DriverPropertyInfo( name, properties.getProperty( name ) );
     }
 
+    @Override
     public int getMajorVersion()
     {
         return 1;
     }
 
+    @Override
     public int getMinorVersion()
     {
         return 0;
     }
 
+    @Override
     public boolean jdbcCompliant()
     {
         return false;
@@ -114,36 +123,11 @@ public class Driver implements java.sql.Driver
         return queries;
     }
 
-    void parseUrlProperties( String s, Properties properties )
-    {
-        if ( s.contains( "?" ) )
-        {
-            String urlProps = s.substring( s.indexOf( '?' ) + 1 );
-            String[] props = urlProps.split( "," );
-            for ( String prop : props )
-            {
-                int idx = prop.indexOf( '=' );
-                if ( idx != -1 )
-                {
-                    String key = prop.substring( 0, idx );
-                    String value = prop.substring( idx + 1 );
-                    properties.put( key, value );
-                }
-                else
-                {
-                    properties.put( prop, "true" );
-                }
-            }
-        }
-    }
-
-    private final Databases databases = createDatabases();
-
     private Databases createDatabases()
     {
         try
         {
-            return (Databases) Class.forName( "org.neo4j.jdbc.embedded.EmbeddedDatabases" ).newInstance();
+            return (Databases) Class.forName( "org.neo4j.jdbc.internal.embedded.EmbeddedDatabases" ).newInstance();
         }
         catch ( Throwable e )
         {
