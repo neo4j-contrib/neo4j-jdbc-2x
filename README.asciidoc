@@ -115,8 +115,8 @@ Here is how you can try it out:
 * Add the JDBC driver jar as a Neo4j driver in the Driver Manager.
 * Add a connection to your database
 * Under "Connection properties", change "SQL Statements" as follows:
-** +SELECT ALL: start n=node(0) match (n)-[:TYPE]->(type)<-[:IS_A]-(instance) return *+ .
-** +SELECT COUNT: start n=node(0) match (n)-[:TYPE]->(type)<-[:IS_A]-(instance) return count(instance)+
+** SELECT ALL: +start n=node(0) match (n)-[:TYPE]->(type)<-[:IS_A]-(instance) return *+
+** SELECT COUNT: +start n=node(0) match (n)-[:TYPE]->(type)<-[:IS_A]-(instance) return count(instance)+
 
 Now you should be able to browse the type nodes as tables and the nodes of those types as rows.
 Use the "SQL Commander" to issue arbitrary Cypher queries to the Neo4j server.
