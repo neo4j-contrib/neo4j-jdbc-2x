@@ -78,6 +78,25 @@ the instance to the type node via the IS_A relationship. By using this structure
 * For each property node, set property "name" and "type". "type" should be "String" for now
 * Add as many instance nodes as you want, with the defined properties, and relate them to their
   type node with the IS_A relationship
+  
+==== Example of MetaData-Setup ====
+
+-----------------------------------------------------------------------------
+begin
+create (_0:`MetaDataRoot`)
+create (_1 {type:"Person"})
+create (_2 {name:"name"})
+create _0-[:`TYPE`]->_1
+create _1-[:`HAS_PROPERTY`]->_2
+
+create (_3:`Person` {name:"Anders"})
+create (_1-[:`IS_A`]->_3)
+
+;
+commit
+
+-----------------------------------------------------------------------------
+
 
 === Quirks modes ===
 
