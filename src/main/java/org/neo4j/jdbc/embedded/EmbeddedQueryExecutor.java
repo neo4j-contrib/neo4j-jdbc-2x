@@ -1,19 +1,21 @@
 package org.neo4j.jdbc.embedded;
 
 import java.sql.SQLException;
+import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.neo4j.cypher.javacompat.ExecutionEngine;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.ResourceIterator;
-import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.*;
 import org.neo4j.helpers.Exceptions;
+import org.neo4j.helpers.collection.IterableWrapper;
 import org.neo4j.helpers.collection.IteratorWrapper;
 import org.neo4j.jdbc.ExecutionResult;
 import org.neo4j.jdbc.QueryExecutor;
 import org.neo4j.jdbc.Version;
+import org.neo4j.jdbc.util.PropertyContainerMap;
 import org.neo4j.kernel.GraphDatabaseAPI;
 import org.neo4j.kernel.KernelData;
 
@@ -80,7 +82,7 @@ public class EmbeddedQueryExecutor implements QueryExecutor
             {
                 for ( int i = 0; i < cols; i++ )
                 {
-                    resultRow[i] = row.get( columns.get( i ) );
+                    resultRow[i] = Converter.convert( row.get( columns.get( i ) ) );
                 }
                 return resultRow;
             }

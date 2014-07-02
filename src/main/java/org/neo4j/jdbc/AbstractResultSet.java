@@ -32,6 +32,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.neo4j.jdbc.util.Castable;
 
 /**
  * @author mh
@@ -370,12 +371,25 @@ public abstract class AbstractResultSet implements ResultSet
 
     public <T> T getObject( int columnIndex, Class<T> type ) throws SQLException
     {
-        return type.cast( getObject( columnIndex ) );
+        Object value = getObject(columnIndex);
+        if ( value == null )
+        {
+            return null;
+        }
+        if (type.isInstance( value ) )
+        {
+            return type.cast( value );
+        }
+        if ( value instanceof Castable )
+        {
+            return ( ( Castable ) value ).to( type );
+        }
+        throw new SQLException( "Unable to convert from " + value.getClass().getName() + " to " + type );
     }
 
     public <T> T getObject( String columnLabel, Class<T> type ) throws SQLException
     {
-        return type.cast( getObject( columnLabel ) );
+        return getObject( findColumn( columnLabel ), type );
     }
 
 
