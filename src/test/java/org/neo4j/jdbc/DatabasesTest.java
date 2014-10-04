@@ -3,6 +3,7 @@ package org.neo4j.jdbc;
 import java.io.File;
 import java.util.Properties;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -12,7 +13,6 @@ import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.jdbc.embedded.EmbeddedDatabases;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 import org.neo4j.kernel.EmbeddedReadOnlyGraphDatabase;
-import org.neo4j.kernel.impl.util.FileUtils;
 import org.neo4j.test.ImpermanentGraphDatabase;
 
 import static org.junit.Assert.assertSame;
@@ -61,7 +61,7 @@ public class DatabasesTest
     @Test
     public void testLocateFileDb() throws Exception
     {
-        FileUtils.deleteRecursively( new File( "target/test-db" ) );
+        FileUtils.deleteDirectory( new File( "target/test-db" ) );
         final GraphDatabaseService db = databases.createDatabase( ":file:target/test-db", null );
         assertTrue( db instanceof EmbeddedGraphDatabase );
         final GraphDatabaseService db2 = databases.createDatabase( ":file:target/test-db", null );
@@ -72,7 +72,7 @@ public class DatabasesTest
     @Ignore("Not possible anymore to have a rw and ro-db accesssing the same store-files")
     public void testLocateFileDbReadonly() throws Exception
     {
-        FileUtils.deleteRecursively( new File( "target/test-db-ro" ) );
+        FileUtils.deleteDirectory( new File( "target/test-db-ro" ) );
         GraphDatabaseService db0 = new GraphDatabaseFactory().newEmbeddedDatabase( "target/test-db-ro" );
         try
         {
