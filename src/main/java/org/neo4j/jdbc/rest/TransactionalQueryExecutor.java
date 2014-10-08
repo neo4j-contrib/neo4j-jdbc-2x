@@ -1,17 +1,12 @@
 package org.neo4j.jdbc.rest;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.sql.SQLException;
-import java.sql.SQLNonTransientConnectionException;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
+import org.neo4j.jdbc.ExecutionResult;
+import org.neo4j.jdbc.QueryExecutor;
+import org.neo4j.jdbc.Version;
 import org.restlet.Response;
 import org.restlet.data.CharacterSet;
 import org.restlet.data.MediaType;
@@ -21,9 +16,13 @@ import org.restlet.resource.ClientResource;
 import org.restlet.resource.ResourceException;
 import org.restlet.routing.Filter;
 
-import org.neo4j.jdbc.ExecutionResult;
-import org.neo4j.jdbc.QueryExecutor;
-import org.neo4j.jdbc.Version;
+import java.io.IOException;
+import java.io.Reader;
+import java.sql.SQLException;
+import java.sql.SQLNonTransientConnectionException;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * @author mh
@@ -113,9 +112,13 @@ public class TransactionalQueryExecutor implements QueryExecutor
         final String jsonString = toString( requestData );
         final Variant variant = new Variant( MediaType.APPLICATION_JSON );
         variant.setCharacterSet( CharacterSet.UTF_8 );
-        Representation representation = requestResource.toRepresentation( jsonString, variant );
-        representation.setCharacterSet( CharacterSet.UTF_8 );
-        return representation;
+        try {
+            Representation representation = requestResource.toRepresentation(jsonString, variant);
+            representation.setCharacterSet(CharacterSet.UTF_8);
+            return representation;
+        } catch (IOException ioe) {
+            throw new RuntimeException( "Error converting representation", ioe );
+        }
     }
 
     public Iterator<ExecutionResult> commit( Statement... statements ) throws SQLException

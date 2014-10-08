@@ -1,13 +1,5 @@
 package org.neo4j.jdbc.rest;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.logging.Level;
-
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.JsonToken;
@@ -15,18 +7,15 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.restlet.Client;
 import org.restlet.Context;
-import org.restlet.data.ChallengeScheme;
-import org.restlet.data.CharacterSet;
-import org.restlet.data.ClientInfo;
-import org.restlet.data.MediaType;
-import org.restlet.data.Parameter;
-import org.restlet.data.Preference;
-import org.restlet.data.Reference;
-import org.restlet.data.Status;
+import org.restlet.data.*;
 import org.restlet.representation.Representation;
 import org.restlet.representation.Variant;
 import org.restlet.resource.ClientResource;
 import org.restlet.util.Series;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.logging.Level;
 
 import static java.util.Arrays.asList;
 
@@ -255,9 +244,15 @@ public class Resources
         public Representation toRepresentation( Object source, Variant target )
         {
             target.setCharacterSet( CharacterSet.UTF_8 );
-            Representation representation = super.toRepresentation( source, target );
-            representation.setCharacterSet( CharacterSet.UTF_8 );
-            return representation;
+
+            try {
+                Representation representation = super.toRepresentation(source, target);
+                representation.setCharacterSet( CharacterSet.UTF_8 );
+                return representation;
+            } catch (IOException ioe)
+            {
+                throw new RuntimeException( "Error converting representation", ioe );
+            }
         }
 
     }
@@ -278,9 +273,15 @@ public class Resources
         public Representation toRepresentation( Object source, Variant target )
         {
             target.setCharacterSet( CharacterSet.UTF_8 );
-            Representation representation = super.toRepresentation( source, target );
-            representation.setCharacterSet( CharacterSet.UTF_8 );
-            return representation;
+
+            try {
+                Representation representation = super.toRepresentation(source, target);
+                representation.setCharacterSet( CharacterSet.UTF_8 );
+                return representation;
+            } catch (IOException ioe)
+            {
+                throw new RuntimeException( "Error converting representation", ioe );
+            }
         }
 
         @Override
@@ -338,9 +339,15 @@ public class Resources
         public Representation toRepresentation( Object source, Variant target )
         {
             target.setCharacterSet( CharacterSet.UTF_8 );
-            Representation representation = super.toRepresentation( source, target );
-            representation.setCharacterSet( CharacterSet.UTF_8 );
-            return representation;
+
+            try {
+                Representation representation = super.toRepresentation(source, target);
+                representation.setCharacterSet( CharacterSet.UTF_8 );
+                return representation;
+            } catch (IOException ioe)
+            {
+                throw new RuntimeException( "Error converting representation", ioe );
+            }
         }
 
         @Override
