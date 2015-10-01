@@ -174,7 +174,8 @@ public class Neo4jStatement
     public int getUpdateCount() throws SQLException
     {
         // TODO return actual update count
-        throw unsupported( "getUpdateCount" );
+        // throw unsupported( "getUpdateCount" );
+        return -1;
     }
 
     @Override
