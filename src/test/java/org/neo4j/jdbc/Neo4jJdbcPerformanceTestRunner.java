@@ -26,7 +26,6 @@ import org.neo4j.graphdb.DynamicRelationshipType;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.test.ImpermanentGraphDatabase;
 
 /**
  * @author mh
@@ -37,11 +36,9 @@ public class Neo4jJdbcPerformanceTestRunner
 
     private static final int RUNS = 10;
     private static final int COUNT = 5000;
-    private ImpermanentGraphDatabase gdb;
 
-    public Neo4jJdbcPerformanceTestRunner( ImpermanentGraphDatabase gdb )
+    public Neo4jJdbcPerformanceTestRunner( GraphDatabaseService gdb )
     {
-        this.gdb = gdb;
         createData( gdb, COUNT );
     }
 

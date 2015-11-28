@@ -30,10 +30,9 @@ import org.neo4j.graphdb.DynamicRelationshipType;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.kernel.KernelData;
 import org.neo4j.server.CommunityNeoServer;
-import org.neo4j.test.ImpermanentGraphDatabase;
 import org.neo4j.test.TestGraphDatabaseFactory;
+import org.neo4j.kernel.Version;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -60,7 +59,7 @@ public abstract class Neo4jJdbcTest
     }
 
     protected Neo4jConnection conn;
-    protected static ImpermanentGraphDatabase gdb;
+    protected static GraphDatabaseService gdb;
     private static CommunityNeoServer webServer;
     protected final Mode mode;
     private Transaction tx;
@@ -89,13 +88,13 @@ public abstract class Neo4jJdbcTest
     @BeforeClass
     public static void before()
     {
-        gdb = (ImpermanentGraphDatabase) new TestGraphDatabaseFactory().newImpermanentDatabase();
+        gdb = new TestGraphDatabaseFactory().newImpermanentDatabase();
     }
 
     public Neo4jJdbcTest( Mode mode ) throws SQLException
     {
         this.mode = mode;
-        gdb.cleanContent();
+        cleanDatabase();
         driver = new Driver();
         conn = connect( mode );
     }
@@ -140,7 +139,7 @@ public abstract class Neo4jJdbcTest
     private void updateGdbFromServer()
     {
         if (gdb !=null ) { gdb.shutdown(); }
-        gdb = (ImpermanentGraphDatabase) webServer.getDatabase().getGraph();
+        gdb = webServer.getDatabase().getGraph();
     }
 
 
@@ -165,7 +164,7 @@ public abstract class Neo4jJdbcTest
     @Before
     public void setUp() throws SQLException, Exception
     {
-        gdb.cleanContent();
+        cleanDatabase();
     }
 
     protected String jdbcUrl()
@@ -222,8 +221,7 @@ public abstract class Neo4jJdbcTest
 
     protected Version getVersion()
     {
-        final String releaseVersion = gdb.getDependencyResolver().resolveDependency( KernelData.class ).version().getRevision();
-        return new Version( releaseVersion );
+        return org.neo4j.kernel.Version.getKernel();
     }
 
     protected Transaction begin()
@@ -237,6 +235,13 @@ public abstract class Neo4jJdbcTest
         {
             tx.success();
             tx.close();
+        }
+    }
+
+    private void cleanDatabase() {
+        try (Transaction tx = gdb.beginTx()) {
+            gdb.execute("MATCH n DETACH DELETE n");
+            tx.success();
         }
     }
 

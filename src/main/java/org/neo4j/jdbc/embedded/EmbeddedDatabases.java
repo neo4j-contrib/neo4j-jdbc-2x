@@ -18,6 +18,8 @@
  */
 package org.neo4j.jdbc.embedded;
 
+import java.io.File;
+import java.util.Map;
 import java.util.Properties;
 import java.util.WeakHashMap;
 import java.util.regex.Matcher;
@@ -29,7 +31,6 @@ import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.graphdb.factory.GraphDatabaseSettings;
 import org.neo4j.jdbc.Databases;
 import org.neo4j.jdbc.QueryExecutor;
-import org.neo4j.test.ImpermanentGraphDatabase;
 import org.neo4j.test.TestGraphDatabaseFactory;
 
 /**
@@ -59,12 +60,19 @@ public class EmbeddedDatabases implements Databases
             }, file
             {
                 @Override
-                public GraphDatabaseService create( String name, Properties properties )
+                public GraphDatabaseService create( final String name, Properties properties )
                 {
-                    GraphDatabaseBuilder builder = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder( name );
+                    GraphDatabaseBuilder builder = new GraphDatabaseBuilder(new GraphDatabaseBuilder.DatabaseCreator() {
+                        @Override
+                        public GraphDatabaseService newDatabase(Map<String, String> map) {
+                            return new GraphDatabaseFactory().newEmbeddedDatabase(new File(name));
+                        }
+                    });
+
                     if ( isReadOnly( properties ) )
                     {
-                         builder.setConfig( GraphDatabaseSettings.read_only, "true" );
+                        builder.setConfig(GraphDatabaseSettings.read_only,"true");
+
                     }
                     return withShutdownHook( builder.newGraphDatabase() );
                 }
