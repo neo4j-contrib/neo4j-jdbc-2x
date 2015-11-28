@@ -22,14 +22,13 @@ import java.io.File;
 import java.util.Properties;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.io.fs.FileUtils;
 import org.neo4j.jdbc.embedded.EmbeddedDatabases;
-import org.neo4j.kernel.EmbeddedGraphDatabase;
-import org.neo4j.test.ImpermanentGraphDatabase;
+import org.neo4j.kernel.impl.factory.GraphDatabaseFacade;
+import org.neo4j.test.TestGraphDatabaseFactory;
 
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -52,14 +51,16 @@ public class DatabasesTest
     @Test
     public void testLocateMem() throws Exception
     {
-        assertTrue( databases.createDatabase( ":mem", null ) instanceof ImpermanentGraphDatabase );
+        GraphDatabaseService db = databases.createDatabase( ":mem", null );
+        assertTrue( db instanceof GraphDatabaseFacade );
+        assertTrue( ( (GraphDatabaseFacade) db ).getStoreDir().contains("impermanent"));
     }
 
     @Test
     public void testLocateNamedMem() throws Exception
     {
         final GraphDatabaseService db = databases.createDatabase( ":mem:a", null );
-        assertTrue( db instanceof ImpermanentGraphDatabase );
+        assertTrue( db instanceof GraphDatabaseFacade );
         final GraphDatabaseService db2 = databases.createDatabase( ":mem:a", null );
         assertSame( db2, db );
     }
@@ -67,7 +68,7 @@ public class DatabasesTest
     @Test
     public void testLocateNamedInstance() throws Exception
     {
-        final GraphDatabaseService db = new ImpermanentGraphDatabase();
+        final GraphDatabaseService db = new TestGraphDatabaseFactory().newImpermanentDatabase();
         final Properties props = new Properties();
         props.put( "a", db );
         final GraphDatabaseService db2 = databases.createDatabase( ":instance:a", props );
@@ -79,7 +80,8 @@ public class DatabasesTest
     {
         FileUtils.deleteRecursively( new File( "target/test-db" ) );
         final GraphDatabaseService db = databases.createDatabase( ":file:target/test-db", null );
-        assertTrue( db instanceof EmbeddedGraphDatabase );
+        assertTrue( db instanceof GraphDatabaseFacade );
+        assertTrue( ((GraphDatabaseFacade) db).getStoreDir().contains("test-db") );
         final GraphDatabaseService db2 = databases.createDatabase( ":file:target/test-db", null );
         assertSame( db2, db );
     }

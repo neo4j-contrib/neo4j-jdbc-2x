@@ -2,13 +2,13 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.neo4j</groupId>
     <artifactId>neo4j-jdbc</artifactId>
-    <version>2.2-SNAPSHOT</version>
+    <version>2.3-SNAPSHOT</version>
     <name>Neo4j JDBC Driver</name>
     <description>Neo4j JDBC Driver</description>
     <url>http://github.com/neo4j-contrib/neo4j-jdbc</url>
 
     <properties>
-        <neo4j.version>2.2.6</neo4j.version>
+        <neo4j.version>2.3.1</neo4j.version>
         <bundle.namespace>org.neo4j.jdbc</bundle.namespace>
         <short-name>neo4j-jdbc</short-name>
     </properties>
