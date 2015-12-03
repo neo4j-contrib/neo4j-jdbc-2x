@@ -154,4 +154,42 @@ public class JsonUtils
         }
         return array;
     }
+    
+	/**
+	 * Prepares a query for embedding within the JSON body.
+	 * 
+	 * <ol>
+	 *    <li>Normalizes cypher property value delimiters to single quotes.</li>
+	 *    <li>Escapes unescaped double quotes found within single quote delimiters</li>
+	 *    <li>Replaces newline characters with spaces.</li>
+	 * </ol> 
+	 * 
+	 * @param query the unescaped query
+	 * @return the escaped query
+	 */
+    static String escapeQuery( String query )
+    {
+    	StringBuilder buf = new StringBuilder(query);
+    	boolean inSingleQuotes = false;
+    	boolean coerce = false;
+    	for(int i = 0; i < buf.length(); i++) {
+    		if(buf.charAt(i) == '\'' && (i > 0 && buf.charAt(i - 1) != '\\'))
+    			inSingleQuotes = !inSingleQuotes;
+    		else if(buf.charAt(i) == '\"') {
+    			if(!inSingleQuotes || (coerce && i > 0 && buf.charAt(i - 1) != '\\')) {
+    				buf.setCharAt(i, '\'');
+        			inSingleQuotes = !inSingleQuotes;
+        			coerce = inSingleQuotes;
+    			}
+    			else if(i > 0 && buf.charAt(i - 1) != '\\')
+    				buf.insert(i, '\\');
+    		}
+    		else if(buf.charAt(i) == '\n')
+    			buf.setCharAt(i, ' ');
+    	}
+
+    	return buf.toString();
+    }
+	
+    
 }

@@ -24,7 +24,7 @@ public class Statement
     public ObjectNode toJson( ObjectMapper mapper )
     {
         ObjectNode queryNode = mapper.createObjectNode();
-        queryNode.put( "statement", escapeQuery( query ) );
+        queryNode.put( "statement", JsonUtils.escapeQuery( query ) );
         if ( params != null && !params.isEmpty() )
         {
             queryNode.put( "parameters", JsonUtils.serialize( params, mapper ) );
@@ -36,11 +36,6 @@ public class Statement
     public String toString()
     {
         return "query: " + query + "\nparams:" + params;
-    }
-
-    private String escapeQuery( String query )
-    {
-        return query.replace( '\"', '\'' ).replace( '\n', ' ' );
     }
 
     public static ArrayNode toJson( ObjectMapper mapper, Statement... statements )

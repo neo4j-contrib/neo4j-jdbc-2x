@@ -11,6 +11,9 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
+import org.neo4j.jdbc.ExecutionResult;
+import org.neo4j.jdbc.QueryExecutor;
+import org.neo4j.jdbc.Version;
 import org.restlet.Response;
 import org.restlet.data.CharacterSet;
 import org.restlet.representation.Representation;
@@ -21,6 +24,7 @@ import org.restlet.routing.Filter;
 import org.neo4j.jdbc.ExecutionResult;
 import org.neo4j.jdbc.QueryExecutor;
 import org.neo4j.jdbc.Version;
+import org.restlet.util.Series;
 
 /**
  * @author mh
@@ -143,19 +147,12 @@ public class RestQueryExecutor implements QueryExecutor
     private ObjectNode queryParameter( String query, Map<String, Object> parameters )
     {
         ObjectNode queryNode = mapper.createObjectNode();
-        queryNode.put( "query", escapeQuery( query ) );
+        queryNode.put( "query", JsonUtils.escapeQuery( query ) );
         if ( parameters != null )
         {
             queryNode.put( "params", JsonUtils.serialize( parameters, mapper ) );
         }
         return queryNode;
-    }
-
-    private String escapeQuery( String query )
-    {
-        query = query.replace( '\"', '\'' );
-        query = query.replace( '\n', ' ' );
-        return query;
     }
 
     @Override
