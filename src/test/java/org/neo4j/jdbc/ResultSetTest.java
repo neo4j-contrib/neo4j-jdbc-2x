@@ -1,5 +1,11 @@
 package org.neo4j.jdbc;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.Types;
@@ -8,13 +14,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-
 import static java.util.Arrays.asList;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -31,31 +31,44 @@ public class ResultSetTest
     private static List<Object> row;
 
     @SuppressWarnings("unchecked")
-    @Parameterized.Parameters
+    @Parameters
     public static Collection<ResultSet[]> data()
     {
-        row = Arrays.<Object>asList( "0", 1, (short) 2, 3L, (byte) 4, 5f, 6d, BigDecimal.valueOf( 7L ), null,
-                new String[]{"array"}, Collections.singletonMap( "a", 1 ), Collections.singletonList( "list" ) );
-
-        List<Neo4jColumnMetaData> columns = asList(
-                col( "String", Types.VARCHAR ),
-                col( "int", Types.INTEGER ),
-                col( "short", Types.SMALLINT ),
-                col( "long", Types.BIGINT ),
-                col( "byte", Types.TINYINT ),
-                col( "float", Types.FLOAT ),
-                col( "double", Types.DOUBLE ),
-                col( "BigDecimal", Types.NUMERIC ),
-                col( "Null", Types.NULL ),
-                col( "Array", Types.ARRAY ),
-                col( "Map", Types.STRUCT ),
-                col( "List", Types.ARRAY )
+        row = asList(
+            "0",
+            1,
+            (short) 2,
+            3L,
+            (byte) 4,
+            5f,
+            6d,
+            BigDecimal.valueOf( 7L ),
+            null,
+            new String[]{"array"},
+            Collections.singletonMap( "a", 1 ),
+            Collections.singletonList( "list" ),
+            2147483648L
         );
 
-        return Arrays.<ResultSet[]>asList( new ResultSet[]{new ListResultSet( columns,
-                Arrays.<List<Object>>asList( row ), null )},
-                new ResultSet[]{new IteratorResultSet( columns, Arrays.<Object[]>asList( row.toArray() ).iterator(),
-                        null )}
+        List<Neo4jColumnMetaData> columns = asList(
+            col( "String", Types.VARCHAR ),
+            col( "int", Types.INTEGER ),
+            col( "short", Types.SMALLINT ),
+            col( "long", Types.BIGINT ),
+            col( "byte", Types.TINYINT ),
+            col( "float", Types.FLOAT ),
+            col( "double", Types.DOUBLE ),
+            col( "BigDecimal", Types.NUMERIC ),
+            col( "Null", Types.NULL ),
+            col( "Array", Types.ARRAY ),
+            col( "Map", Types.STRUCT ),
+            col( "List", Types.ARRAY ),
+            col( "bigger_than_int", Types.BIGINT )
+        );
+
+        return Arrays.<ResultSet[]>asList(
+            new ResultSet[]{new ListResultSet( columns, asList(row), null )},
+            new ResultSet[]{new IteratorResultSet( columns, Arrays.<Object[]>asList( row.toArray() ).iterator(), null )}
         );
     }
 
@@ -105,7 +118,26 @@ public class ResultSetTest
         assertEquals( OBJECT_MAPPER.writeValueAsString( row.get( 11 ) ), rs.getString( "List" ) );
         assertEquals( OBJECT_MAPPER.writeValueAsString( row.get( 11 ) ), rs.getString( 12 ) );
 
+        testLongToIntConversion();
+        testNonNumericalValueConversionToInt();
+
+
         assertFalse( rs.next() );
+    }
+
+    private void testLongToIntConversion() throws Exception
+    {
+        assertEquals( ((Long)row.get(3)).intValue(), rs.getInt( 4 ) );
+        assertEquals( ((Long)row.get(3)).intValue(), rs.getInt( "long" ) );
+
+        assertEquals( ((Long)row.get(12)).intValue(), rs.getInt( 13 ) );
+        assertEquals( ((Long)row.get(12)).intValue(), rs.getInt( "bigger_than_int" ) );
+    }
+
+    private void testNonNumericalValueConversionToInt() throws Exception
+    {
+        assertEquals( 0, rs.getInt( 11 ) );
+        assertEquals( 0, rs.getInt( "Map" ) );
     }
 
     private static Neo4jColumnMetaData col( String typeName, int type )

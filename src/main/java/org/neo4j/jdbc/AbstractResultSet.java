@@ -153,15 +153,11 @@ public abstract class AbstractResultSet implements ResultSet
     @Override
     public int getInt( int i ) throws SQLException
     {
-        Object value = get( i );
-        if ( value == null || !(value instanceof Integer) )
-        {
+        Object rawValue = get(i);
+        if (!(rawValue instanceof Number)) {
             return 0;
         }
-        else
-        {
-            return (Integer) value;
-        }
+        return ((Number) rawValue).intValue();
     }
 
     @Override
