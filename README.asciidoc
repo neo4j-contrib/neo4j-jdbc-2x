@@ -14,7 +14,7 @@ The driver can be used in conjunction with
 * an existing Neo4j GraphDatabaseService instance passed to the driver
 * an temporary in-memory instance of Neo4j
 
-Here is a binary download of the http://dist.neo4j.org/neo4j-jdbc/neo4j-jdbc-2.0.1-SNAPSHOT-jar-with-dependencies.jar[Neo4j-2.0.1-SNAPSHOT Version]
+Here is a binary download of the https://m2.neo4j.org/content/repositories/snapshots/org/neo4j/neo4j-jdbc/2.3-SNAPSHOT/[Neo4j-2.3-SNAPSHOT Version]
 
 === Minimum Viable Snippet ===
 
@@ -48,19 +48,25 @@ try(Statement stmt = con.createStatement())
     <dependency>
       <groupId>org.neo4j</groupId>
       <artifactId>neo4j-jdbc</artifactId>
-      <version>2.0.2</version>
+      <version>2.3-SNAPSHOT</version>
     </dependency>
 
     <!-- For file and in-memory support, add these two as well -->
     <dependency>
       <groupId>org.neo4j</groupId>
       <artifactId>neo4j</artifactId>
-      <version>2.0.3</version>
+      <version>2.3.2</version>
     </dependency>
     <dependency>
       <groupId>org.neo4j</groupId>
       <artifactId>neo4j-kernel</artifactId>
-      <version>2.0.3</version>
+      <version>2.3.2</version>
+      <type>test-jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.neo4j</groupId>
+      <artifactId>neo4j-io</artifactId>
+      <version>2.3.2</version>
       <type>test-jar</type>
     </dependency>
 
