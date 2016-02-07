@@ -30,9 +30,9 @@ import org.neo4j.graphdb.DynamicRelationshipType;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
+import org.neo4j.kernel.Version;
 import org.neo4j.server.CommunityNeoServer;
 import org.neo4j.test.TestGraphDatabaseFactory;
-import org.neo4j.kernel.Version;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -62,6 +62,7 @@ public abstract class Neo4jJdbcTest
     protected static GraphDatabaseService gdb;
     private static CommunityNeoServer webServer;
     protected final Mode mode;
+    protected static Mode prev_mode;
     private Transaction tx;
 
     protected long createNode() throws SQLException
@@ -73,16 +74,13 @@ public abstract class Neo4jJdbcTest
 
     public enum Mode
     {
-        embedded, server, server_tx, server_auth
+        embedded, server, server_auth
     }
 
     @Parameterized.Parameters
     public static Collection<Object[]> data()
     {
-        return Arrays.<Object[]>asList(new Object[]{Mode.embedded},new Object[]{Mode.server},
-                                       new Object[]{Mode.server_auth},new Object[]{Mode.server_tx});
-//        return Arrays.<Object[]>asList( new Object[]{Mode.server_tx} );
-//        return Arrays.<Object[]>asList(new Object[]{Mode.embedded});
+        return Arrays.<Object[]>asList(new Object[]{Mode.embedded}, new Object[]{Mode.server_auth}, new Object[]{Mode.server});
     }
 
     @BeforeClass
@@ -97,25 +95,22 @@ public abstract class Neo4jJdbcTest
         cleanDatabase();
         driver = new Driver();
         conn = connect( mode );
+        prev_mode = mode;
     }
 
     protected Neo4jConnection connect( Mode mode ) throws SQLException
     {
         final Properties props = new Properties();
+        if (mode != prev_mode && webServer != null) {
+            webServer.stop();
+            webServer = null;
+        }
         switch ( mode )
         {
             case embedded:
                 props.put( "db", gdb );
                 return driver.connect( "jdbc:neo4j:instance:db", props );
             case server:
-                if ( webServer == null )
-                {
-                    webServer = TestServer.startWebServer( TestServer.PORT, false );
-                    updateGdbFromServer();
-                }
-                props.setProperty( Driver.LEGACY, "true" );
-                return driver.connect( "jdbc:neo4j://localhost:" + TestServer.PORT, props );
-            case server_tx:
                 if ( webServer == null )
                 {
                     webServer = TestServer.startWebServer( TestServer.PORT, false );
@@ -130,7 +125,6 @@ public abstract class Neo4jJdbcTest
                 }
                 props.put( Driver.USER, TestAuthenticationFilter.USER );
                 props.put( Driver.PASSWORD, TestAuthenticationFilter.PASSWORD );
-                props.setProperty( Driver.LEGACY, "true" );
                 return driver.connect( "jdbc:neo4j://localhost:" + TestServer.PORT, props );
         }
         throw new IllegalStateException( "Unknown mode "+ mode );
@@ -190,9 +184,7 @@ public abstract class Neo4jJdbcTest
 
     protected void createTableMetaData( GraphDatabaseService gdb, String typeName, String propName, String propType )
     {
-        final Transaction tx = gdb.beginTx();
-        try
-        {
+        try (Transaction tx = gdb.beginTx()) {
             final Node root = gdb.createNode( DynamicLabel.label( "MetaDataRoot" ) );
             final Node type = gdb.createNode();
             type.setProperty( "type", typeName );
@@ -202,10 +194,6 @@ public abstract class Neo4jJdbcTest
             property.setProperty( "type", propType );
             type.createRelationshipTo( property, DynamicRelationshipType.withName( "HAS_PROPERTY" ) );
             tx.success();
-        }
-        finally
-        {
-            tx.finish();
         }
     }
 

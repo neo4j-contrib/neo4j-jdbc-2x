@@ -8,18 +8,25 @@
     <url>http://github.com/neo4j-contrib/neo4j-jdbc</url>
 
     <properties>
-        <neo4j.version>2.3.1</neo4j.version>
+        <neo4j.version>2.3.2</neo4j.version>
         <bundle.namespace>org.neo4j.jdbc</bundle.namespace>
         <short-name>neo4j-jdbc</short-name>
     </properties>
 
     <packaging>jar</packaging>
 
+    <organization>
+        <name>Neo Technology, Inc.</name>
+        <url>http://neotechnology.com/</url>
+    </organization>
+    <developers>
+        <developer>
+            <id>neo-technology</id>
+        </developer>
+    </developers>
+
     <scm>
-        <connection>scm:git:git://github.com/neo4j-contrib/neo4j-jdbc.git</connection>
-        <developerConnection>scm:git:git@github.com:neo4j-contrib/neo4j-jdbc.git</developerConnection>
         <url>https://github.com/neo4j-contrib/neo4j-jdbc</url>
-        <tag>HEAD</tag>
     </scm>
 
     <licenses>
@@ -28,7 +35,8 @@
         <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
         <comments>
           Note that this license is for the project itself,
-          and not for its dependencies.
+          and not for its dependencies. See the included NOTICE.txt
+          file for further details.
           </comments>
           <distribution>repo</distribution>
       </license>
@@ -41,9 +49,8 @@
             <url>http://maven.restlet.org</url>
         </repository>
         <repository>
-            <id>neo4j-releases</id>
-            <name>Neo4j Snapshots</name>
-            <url>http://m2.neo4j.org/content/repositories/releases/</url>
+            <id>neo4j</id>
+            <url>http://m2.neo4j.org/content/groups/public</url>
         </repository>
     </repositories>
 
@@ -58,11 +65,11 @@
             <artifactId>org.restlet.ext.httpclient</artifactId>
             <version>2.2.2</version>
         </dependency>
-        <dependency>
+        <!--dependency>
             <groupId>org.neo4j</groupId>
             <artifactId>neo4j-cypher-dsl</artifactId>
-            <version>2.0.0</version>
-        </dependency>
+            <version>2.3-SNAPSHOT</version>
+        </dependency-->
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-core-asl</artifactId>

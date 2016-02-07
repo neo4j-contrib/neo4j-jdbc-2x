@@ -14,7 +14,7 @@ The driver can be used in conjunction with
 * an existing Neo4j GraphDatabaseService instance passed to the driver
 * an temporary in-memory instance of Neo4j
 
-Here is a binary download of the https://m2.neo4j.org/content/repositories/snapshots/org/neo4j/neo4j-jdbc/2.3-SNAPSHOT/[Neo4j-2.3-SNAPSHOT Version]
+Here is a binary download of the http://m2.neo4j.org/content/groups/public/org/neo4j/neo4j-jdbc/2.3-SNAPSHOT/[Neo4j-2.3-SNAPSHOT Version]
 
 === Minimum Viable Snippet ===
 

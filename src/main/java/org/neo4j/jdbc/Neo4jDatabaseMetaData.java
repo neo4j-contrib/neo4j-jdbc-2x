@@ -24,6 +24,8 @@ import java.sql.ResultSet;
 import java.sql.RowIdLifetime;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * Provides metadata about a Neo4j database. Tables are implemented with type nodes, and columns are property nodes
@@ -32,6 +34,7 @@ import java.sql.Types;
 public class Neo4jDatabaseMetaData
         implements DatabaseMetaData
 {
+    public static final Map<String, Object> EMPTY_MAP = Collections.<String, Object>emptyMap();
     private Neo4jConnection connection;
 
     public Neo4jDatabaseMetaData( Neo4jConnection connection )
@@ -762,7 +765,7 @@ public class Neo4jDatabaseMetaData
     @Override
     public ResultSet getTables( String s, String s1, String s2, String[] strings ) throws SQLException
     {
-        ResultSet result = connection.executeQuery( connection.getDriver().getQueries().getTables() );
+        ResultSet result = connection.executeQuery( connection.getDriver().getQueries().getTables(), EMPTY_MAP );
         ResultSetBuilder rs = new ResultSetBuilder();
         rs.column( "TABLE_CAT" ).
                 column( "TABLE_SCHEM" ).
@@ -836,7 +839,7 @@ public class Neo4jDatabaseMetaData
                 column( "IS_AUTOINCREMENT" );
 
         ResultSet result = connection.executeQuery( connection.getDriver().getQueries().getColumns( tableNamePattern
-        ) );
+        ), Collections.<String,Object>singletonMap( "typeName", tableNamePattern ) );
         while ( result.next() )
         {
             rs.row().

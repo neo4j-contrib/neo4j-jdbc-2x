@@ -18,15 +18,15 @@
  */
 package org.neo4j.jdbc.embedded;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.jdbc.Neo4jJdbcPerformanceTestRunner;
+import org.neo4j.test.TestGraphDatabaseFactory;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Properties;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import org.neo4j.jdbc.Neo4jJdbcPerformanceTestRunner;
-import org.neo4j.test.ImpermanentGraphDatabase;
 
 /**
  * @author mh
@@ -35,13 +35,13 @@ import org.neo4j.test.ImpermanentGraphDatabase;
 public class Neo4jJdbcEmbeddedPerformanceTest
 {
 
-    private ImpermanentGraphDatabase gdb;
+    private GraphDatabaseService gdb;
     private Neo4jJdbcPerformanceTestRunner runner;
 
     @Before
     public void setUp() throws Exception
     {
-        gdb = new ImpermanentGraphDatabase();
+        gdb = new TestGraphDatabaseFactory().newImpermanentDatabase();
         runner = new Neo4jJdbcPerformanceTestRunner( gdb );
     }
 

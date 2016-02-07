@@ -21,12 +21,12 @@ package org.neo4j.jdbc.ext;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.neo4j.cypherdsl.grammar.ExecuteWithParameters;
 import org.neo4j.jdbc.Driver;
 import org.neo4j.jdbc.Neo4jConnection;
 
@@ -52,9 +52,11 @@ public class IntelliJConnection
             if ( matcher.matches() )
             {
                 String table = matcher.group( 1 );
-                ExecuteWithParameters ewp = getDriver().getQueries().getData( table, returnProperties( table,
+                HashMap<String, Object> map = new HashMap<>( parameters );
+                map.put("typeName",table);
+                String ewp = getDriver().getQueries().getData( table, returnProperties( table,
                         "instance" ) );
-                return executeQuery( ewp );
+                return executeQuery( ewp , map);
             }
         }
 

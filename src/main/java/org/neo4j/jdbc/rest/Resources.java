@@ -207,7 +207,6 @@ public class Resources
     public class DiscoveryClientResource extends Neo4jClientResource
     {
         private String version;
-        private String cypherPath;
         private String transactionPath;
         private String dataUri;
         private String labelPath;
@@ -236,39 +235,15 @@ public class Resources
 
             version = textField( serverData, "neo4j_version" );
 
-            cypherPath = obtainCypherPath( serverData );
-            labelPath = serverData.get("node_labels").asText(); // /db/data/labels
-            relationshipTypesPath = serverData.get( "relationship_types" ).asText(); // /db/data/relationship/types
-            propertyKeysPath = dataUri + "propertykeys"; // serverData.get("property_keys").asText(); //
+            labelPath = serverData.get("node_labels").asText();
+            relationshipTypesPath = serverData.get( "relationship_types" ).asText();
+            propertyKeysPath = dataUri + "propertykeys";
             // /db/data/relationship/types
             transactionPath = textField( serverData, "transaction" );
-            if ( transactionPath == null && (version.startsWith( "2" ) || version.equals( "1.9.M02-1083-g0593b83" )) )
+            if ( transactionPath == null && version.startsWith( "2"))
             {
                 transactionPath = dataUri + "transaction";
             }
-        }
-
-        private String obtainCypherPath( JsonNode serverData )
-        {
-            String cypherPath = textField( serverData, "cypher" );
-            if ( cypherPath == null )
-            {
-                final JsonNode extensions = serverData.get( "extensions" );
-                if ( extensions != null )
-                {
-                    final JsonNode plugin = extensions.get( "CypherPlugin" );
-                    if ( plugin != null )
-                    {
-                        cypherPath = textField( plugin, "execute_query" );
-                    }
-                }
-            }
-            return cypherPath;
-        }
-
-        public String getCypherPath()
-        {
-            return cypherPath;
         }
 
         public Collection<String> getLabels()

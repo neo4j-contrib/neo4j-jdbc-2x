@@ -28,8 +28,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.neo4j.cypherdsl.Property;
-import org.neo4j.cypherdsl.expression.Expression;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.DynamicRelationshipType;
@@ -80,7 +78,7 @@ public class Neo4jConnectionTest extends Neo4jJdbcTest
     {
         try ( Transaction tx = gdb.beginTx() )
         {
-            final Node root = IteratorUtil.single( GlobalGraphOperations.at( gdb ).getAllNodesWithLabel( DynamicLabel
+            final Node root = IteratorUtil.single( gdb.findNodes( DynamicLabel
                     .label( "MetaDataRoot" ) ) );
             final Relationship typeRel = root.getSingleRelationship( DynamicRelationshipType.withName( "TYPE" ),
                     Direction.OUTGOING );
@@ -121,13 +119,11 @@ public class Neo4jConnectionTest extends Neo4jJdbcTest
     @Test
     public void testProperties() throws Exception
     {
-        final Iterable<Expression> res = conn.returnProperties( tableName, columnPrefix );
+        final Iterable<String> res = conn.returnProperties( tableName, columnPrefix );
         boolean found = false;
-        for ( Expression expression : res )
+        for ( String expression : res )
         {
-            assertTrue( expression instanceof Property );
-            final Property property = (Property) expression;
-            assertEquals( columName, property.toString() );
+            assertEquals( columnPrefix + columName, expression );
             found = true;
         }
         assertTrue( found );

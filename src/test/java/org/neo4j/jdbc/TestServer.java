@@ -18,21 +18,13 @@
  */
 package org.neo4j.jdbc;
 
-import java.io.IOException;
-import java.util.Arrays;
-
-import org.neo4j.kernel.GraphDatabaseAPI;
-import org.neo4j.kernel.configuration.Config;
 import org.neo4j.server.CommunityNeoServer;
-import org.neo4j.server.WrappingNeoServer;
-import org.neo4j.server.configuration.Configurator;
-import org.neo4j.server.configuration.ServerConfigurator;
 import org.neo4j.server.helpers.CommunityServerBuilder;
-import org.neo4j.server.modules.RESTApiModule;
-import org.neo4j.server.modules.ServerModule;
-import org.neo4j.server.modules.ThirdPartyJAXRSModule;
 import org.neo4j.server.web.WebServer;
-import org.neo4j.test.ImpermanentGraphDatabase;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * @author Michael Hunger @since 25.10.13
@@ -45,7 +37,9 @@ public class TestServer
     {
         try
         {
-            CommunityNeoServer server = CommunityServerBuilder.server().onPort( port ).build();
+            CommunityServerBuilder builder = CommunityServerBuilder.server();
+            CommunityNeoServer server = builder.onPort( port ).build();
+            server.init();
             final WebServer webServer = server.getWebServer();
             if ( auth )
             {

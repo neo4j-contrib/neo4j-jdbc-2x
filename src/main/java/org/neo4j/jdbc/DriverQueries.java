@@ -18,59 +18,36 @@
  */
 package org.neo4j.jdbc;
 
-import org.neo4j.cypherdsl.expression.Expression;
-import org.neo4j.cypherdsl.grammar.Execute;
-import org.neo4j.cypherdsl.grammar.ExecuteWithParameters;
-import org.neo4j.cypherdsl.grammar.QueryStringBasedExecute;
-import org.neo4j.cypherdsl.query.clause.ReturnClause;
-
 /**
  * This class contains all the Cypher queries that the driver needs to issue.
  */
 public class DriverQueries
 {
-    public Execute getTables()
+    public String getTables()
     {
-        return new QueryStringBasedExecute( "MATCH (r:MetaDataRoot)-[:TYPE]->(type) RETURN type.type" );
-//        return start(nodesById("n", 0)).
-//                match(node("n").out("TYPE").node("type")).
-//                returns(identifier("type").property("type"));
+        return "MATCH (r:MetaDataRoot)-[:TYPE]->(type) RETURN type.type";
     }
 
-    public Execute getColumns()
+    public String getColumns()
     {
-        return new QueryStringBasedExecute( "MATCH (r:MetaDataRoot)-[:TYPE]->(type)-[:HAS_PROPERTY]->(property) " +
-                "RETURN type.type, property.name, property.type" );
-//        return start(nodesById("n", 0)).
-//                match(node("n").out("TYPE").node("type").out("HAS_PROPERTY").node("property")).
-//                returns(identifier("type").property("type"), identifier("property").property("name"),
-// identifier("property").property("type"));
+        return "MATCH (r:MetaDataRoot)-[:TYPE]->(type)-[:HAS_PROPERTY]->(property) RETURN type.type, property.name, " +
+                "property.type";
     }
 
-    public ExecuteWithParameters getColumns( String typeName )
+    public String getColumns( String typeName )
     {
-        return new QueryStringBasedExecute( "MATCH (r:MetaDataRoot)-[:TYPE]->(type {type:{typeName}})" +
-                "-[:HAS_PROPERTY]->(property) RETURN type.type, property.name, " +
-                "property.type" ).parameter( "typeName", typeName );
-//        return start(nodesById("n", 0)).
-//                match(node("n").out("TYPE").node("type").out("HAS_PROPERTY").node("property")).
-//                where(identifier("type").string("type").eq(param("typename"))).
-//                returns(identifier("type").string("type"), identifier("property").string("name"),
-// identifier("property").string("type")).parameter("typename", typeName);
+        return "MATCH (r:MetaDataRoot)-[:TYPE]->(type {type:{typeName}})-[:HAS_PROPERTY]->(property) RETURN type.type, property.name, property.type";
     }
 
-    public ExecuteWithParameters getData( String typeName, Iterable<Expression> returnProperties )
+    public String getData( String typeName, Iterable<String> returnProperties )
     {
 
         StringBuilder builder = new StringBuilder();
-        new ReturnClause( returnProperties ).asString( builder );
-        // builder.toString()
-        return new QueryStringBasedExecute( "MATCH (r:MetaDataRoot)-[:TYPE]->(type {type:{typeName}})<-[:IS_A]->" +
-                "(instance) " + builder.toString() ).parameter( "typeName", typeName );
-//        return start(nodesById("n",0)).
-//                match(node("n").out("TYPE").node("type").in("IS_A").node("instance")).
-//                where(identifier("type").string("type").eq(param("typename"))).
-//                returns(returnProperties).
-//                parameter("typename", typeName);
+        for ( String property : returnProperties )
+        {
+            if (builder.length() > 0 ) builder.append( ", " );
+            builder.append( property );
+        }
+        return "MATCH (r:MetaDataRoot)-[:TYPE]->(type {type:{typeName}})<-[:IS_A]->(instance) " + builder;
     }
 }

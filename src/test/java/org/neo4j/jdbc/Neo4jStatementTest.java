@@ -28,6 +28,7 @@ import org.junit.Test;
 
 import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.tooling.GlobalGraphOperations;
 
 import static org.junit.Assert.assertEquals;
@@ -100,9 +101,9 @@ public class Neo4jStatementTest extends Neo4jJdbcTest
         int count = 0;
         ps.executeUpdate();
         begin();
-        for ( Node node : GlobalGraphOperations.at( gdb ).getAllNodesWithLabel( DynamicLabel.label( "User" ) ) )
-        {
-            assertEquals( "test", node.getProperty( "name" ) );
+        ResourceIterator<Node> nodes = gdb.findNodes( DynamicLabel.label( "User" ) );
+        while (nodes.hasNext()) {
+            assertEquals( "test", nodes.next().getProperty( "name" ) );
             count++;
         }
         done();
@@ -118,9 +119,10 @@ public class Neo4jStatementTest extends Neo4jJdbcTest
         int count = 0;
         ps.executeUpdate();
         begin();
-        for ( Node node : GlobalGraphOperations.at( gdb ).getAllNodesWithLabel( DynamicLabel.label( "User" ) ) )
+        ResourceIterator<Node> nodes = gdb.findNodes( DynamicLabel.label( "User" ) );
+        while (nodes.hasNext())
         {
-            assertEquals( "test", node.getProperty( "name" ) );
+            assertEquals( "test", nodes.next().getProperty( "name" ) );
             count++;
         }
         done();

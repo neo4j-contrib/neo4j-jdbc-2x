@@ -20,12 +20,7 @@ package org.neo4j.jdbc;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.neo4j.cypherdsl.CypherQuery;
-import org.neo4j.cypherdsl.expression.Expression;
-import org.neo4j.cypherdsl.grammar.Execute;
-import org.neo4j.cypherdsl.grammar.ExecuteWithParameters;
 import org.neo4j.jdbc.rest.Resources;
-import org.neo4j.jdbc.rest.RestQueryExecutor;
 import org.neo4j.jdbc.rest.TransactionalQueryExecutor;
 import org.neo4j.jdbc.util.UserAgentBuilder;
 import org.restlet.Client;
@@ -130,17 +125,10 @@ public class Neo4jConnection extends AbstractConnection
             {
                 Resources.DiscoveryClientResource discovery = resources.getDiscoveryResource();
 
-                if ( !properties.containsKey( Driver.LEGACY ) && discovery.getTransactionPath() != null )
+                if (discovery.getTransactionPath() != null )
                 {
                     return new TransactionalQueryExecutor( resources );
                 }
-                else if ( discovery.getCypherPath() != null )
-                {
-                    url = connectionUrl;
-
-                    return new RestQueryExecutor( resources );
-                }
-
                 throw new SQLException( "Could not connect to the Neo4j Server at " + remoteUrl + " " + discovery
                         .getVersion() );
             }
@@ -362,19 +350,6 @@ public class Neo4jConnection extends AbstractConnection
         return true;
     }
 
-    // Connection helpers
-    public ResultSet executeQuery( Execute execute ) throws SQLException
-    {
-        if ( execute instanceof ExecuteWithParameters )
-        {
-            return executeQuery( execute.toString(), ((ExecuteWithParameters) execute).getParameters() );
-        }
-        else
-        {
-            return executeQuery( execute.toString(), Collections.<String, Object>emptyMap() );
-        }
-    }
-
     public ResultSet executeQuery( final String query, Map<String, Object> parameters ) throws SQLException
     {
         checkClosed( "execute" );
@@ -422,7 +397,8 @@ public class Neo4jConnection extends AbstractConnection
 
     public String tableColumns( String tableName, String columnPrefix ) throws SQLException
     {
-        ResultSet columns = executeQuery( driver.getQueries().getColumns( tableName ) );
+        ResultSet columns = executeQuery( driver.getQueries().getColumns( tableName ), Collections.<String,
+                Object>singletonMap( "typeName", tableName ));
         StringBuilder columnsBuilder = new StringBuilder();
         while ( columns.next() )
         {
@@ -435,13 +411,13 @@ public class Neo4jConnection extends AbstractConnection
         return columnsBuilder.toString();
     }
 
-    public Iterable<Expression> returnProperties( String tableName, String columnPrefix ) throws SQLException
+    public Iterable<String> returnProperties( String tableName, String columnPrefix ) throws SQLException
     {
-        ResultSet columns = executeQuery( driver.getQueries().getColumns( tableName ) );
-        List<Expression> properties = new ArrayList<Expression>();
+        ResultSet columns = executeQuery( driver.getQueries().getColumns( tableName ),  Collections.<String, Object>singletonMap( "typeName", tableName ) );
+        List<String> properties = new ArrayList<String>();
         while ( columns.next() )
         {
-            properties.add( CypherQuery.identifier( columnPrefix ).property( columns.getString( "property.name" ) ) );
+            properties.add(  columnPrefix + columns.getString( "property.name" ) );
         }
         return properties;
     }

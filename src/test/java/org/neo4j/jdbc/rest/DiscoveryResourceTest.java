@@ -21,18 +21,16 @@ package org.neo4j.jdbc.rest;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.neo4j.server.CommunityNeoServer;
-import org.restlet.Client;
-
 import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.DynamicRelationshipType;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.jdbc.TestServer;
 import org.neo4j.kernel.GraphDatabaseAPI;
+import org.neo4j.server.CommunityNeoServer;
+import org.restlet.Client;
 
 import static java.util.Arrays.asList;
-
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -78,12 +76,6 @@ public class DiscoveryResourceTest
         {
             db.shutdown();
         }
-    }
-
-    @Test
-    public void testGetCypherPath() throws Exception
-    {
-        assertEquals( URI + "/db/data/cypher", resource.getCypherPath() );
     }
 
     @Test

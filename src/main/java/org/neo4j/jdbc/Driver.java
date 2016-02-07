@@ -51,7 +51,6 @@ public class Driver implements java.sql.Driver
         }
     }
 
-    static final String LEGACY = "legacy";
     static final String URL_PREFIX = "jdbc:neo4j";
     static final String PASSWORD = "password";
     static final String USER = "user";

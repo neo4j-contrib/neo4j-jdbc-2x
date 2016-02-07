@@ -21,12 +21,13 @@ package org.neo4j.jdbc.ext;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.neo4j.cypherdsl.grammar.ExecuteWithParameters;
 import org.neo4j.jdbc.Driver;
 import org.neo4j.jdbc.Neo4jConnection;
 import org.neo4j.jdbc.ResultSetBuilder;
@@ -52,9 +53,7 @@ public class LibreOfficeConnection
             if ( matcher.matches() )
             {
                 String table = matcher.group( 1 );
-                ExecuteWithParameters ewp = getDriver().getQueries().getData( table, returnProperties( table,
-                        "instance" ) );
-                return executeQuery( ewp );
+                return executeQuery( parameters, table );
             }
         }
 
@@ -64,9 +63,7 @@ public class LibreOfficeConnection
             if ( matcher.matches() )
             {
                 String table = matcher.group( 1 );
-                ExecuteWithParameters ewp = getDriver().getQueries().getData( table, returnProperties( table,
-                        "instance" ) );
-                return executeQuery( ewp );
+                return executeQuery( parameters,table );
             }
         }
 
@@ -76,9 +73,7 @@ public class LibreOfficeConnection
             if ( matcher.matches() )
             {
                 String table = matcher.group( 1 );
-                ExecuteWithParameters ewp = getDriver().getQueries().getData( table, returnProperties( table,
-                        "instance" ) );
-                return executeQuery( ewp );
+                return executeQuery( parameters,table );
             }
         }
 
@@ -90,5 +85,14 @@ public class LibreOfficeConnection
         }
 
         return super.executeQuery( query, parameters );
+    }
+
+    protected ResultSet executeQuery( Map<String, Object> parameters, String table ) throws SQLException
+    {
+        HashMap<String, Object> map = new HashMap<>( parameters );
+        map.put("typeName",table);
+        String ewp = getDriver().getQueries().getData( table, returnProperties( table,
+                "instance" ) );
+        return executeQuery( ewp, map );
     }
 }

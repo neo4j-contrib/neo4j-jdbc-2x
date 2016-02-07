@@ -18,22 +18,19 @@
  */
 package org.neo4j.jdbc.embedded;
 
-import java.sql.SQLException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.ResourceIterator;
+import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.helpers.Exceptions;
 import org.neo4j.helpers.collection.IteratorWrapper;
 import org.neo4j.jdbc.ExecutionResult;
 import org.neo4j.jdbc.QueryExecutor;
 import org.neo4j.jdbc.Version;
-import org.neo4j.kernel.GraphDatabaseAPI;
-import org.neo4j.kernel.KernelData;
+
+import java.sql.SQLException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author mh
@@ -43,7 +40,6 @@ public class EmbeddedQueryExecutor implements QueryExecutor
 {
 
 
-    private final ExecutionEngine executionEngine;
     private final GraphDatabaseService gds;
 
     ThreadLocal<Transaction> tx = new ThreadLocal<Transaction>();
@@ -51,7 +47,6 @@ public class EmbeddedQueryExecutor implements QueryExecutor
     public EmbeddedQueryExecutor( GraphDatabaseService gds )
     {
         this.gds = gds;
-        executionEngine = new ExecutionEngine( gds );
     }
 
     @Override
@@ -60,16 +55,15 @@ public class EmbeddedQueryExecutor implements QueryExecutor
     {
         final Map<String, Object> params = parameters == null ? Collections.<String, Object>emptyMap() : parameters;
         begin();
-        final org.neo4j.cypher.javacompat.ExecutionResult result = executionEngine.execute( query, params );
+        final Result result = gds.execute( query, params );
         final List<String> columns = result.columns();
         final int cols = columns.size();
         final Object[] resultRow = new Object[cols];
-        final ResourceIterator<Map<String, Object>> iterator = result.iterator();
-        if ( !iterator.hasNext() )
+        if ( !result.hasNext() )
         {
             commitIfAutoCommit( autoCommit );
         }
-        return new ExecutionResult( columns, new IteratorWrapper<Object[], Map<String, Object>>( iterator )
+        return new ExecutionResult( columns, new IteratorWrapper<Object[], Map<String, Object>>( result )
         {
             boolean closed = false;
 
@@ -105,7 +99,7 @@ public class EmbeddedQueryExecutor implements QueryExecutor
 
             public void close()
             {
-                iterator.close();
+                result.close();
                 closed = true;
                 commitIfAutoCommit( autoCommit );
             }
@@ -158,7 +152,7 @@ public class EmbeddedQueryExecutor implements QueryExecutor
         }
         tx.set( null );
         transaction.failure();
-        transaction.finish();
+        transaction.close();
     }
 
     private void handleException( Exception cause, String query )
@@ -192,6 +186,6 @@ public class EmbeddedQueryExecutor implements QueryExecutor
     @Override
     public Version getVersion()
     {
-        return new Version( ((GraphDatabaseAPI) gds).getDependencyResolver().resolveDependency( KernelData.class ).version().getRevision() );
+        return new Version( org.neo4j.kernel.Version.getKernel().getRevision() );
     }
 }
