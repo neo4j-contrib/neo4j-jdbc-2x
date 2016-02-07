@@ -39,6 +39,35 @@ public interface QueryExecutor
 
     public class Metadata
     {
+        /*
+        for all labels
+        TODO types
+        TODO collect 10 per rel-type WITH
+
+        MATCH (n:Ping) WHERE SIZE((n)--()) < 1000 WITH n,labels(n) as start_labels,keys(n) as start_props LIMIT 100
+        OPTIONAL MATCH (n)-[r]-(m)
+        WITH start_labels, collect(start_props)[0..10] as start_props, type(r) as rel_type,collect(keys(r))[0..10] as
+        rel_props,
+        case startNode(r) when n then "OUT" else "IN" end as rel_dir, labels(m) as end_labels,collect(keys(m))[0..10]
+         as end_props, count(*) as freq
+        WITH start_labels,
+               reduce(a=[], p in reduce(a=[],coll in start_props | a + coll) | CASE WHEN p in a THEN a ELSE a + [p] END) as start_props,
+             rel_type,
+               reduce(a=[], p in reduce(a=[],coll in rel_props   | a + coll) | CASE WHEN p in a then a else a + [p] end) as rel_props, rel_dir,
+             end_labels,
+               reduce(a=[], p in reduce(a=[],coll in end_props   | a + coll) | CASE WHEN p in a then a else a + [p] end) as end_props, freq
+        RETURN start_labels, start_props,
+               collect({rel_type: rel_type, rel_props : rel_props, rel_dir : rel_dir,
+                        end_labels: end_labels, end_props: end_props, freq:freq}) as rel_data;
+
+
+        table names: join(labels,"_")
+        labels(n)_rel_type_labels(m)
+
+        ?? treat other labels as views?
+        ?? treat rels as views?
+
+        */
         String label;
         Map<String, Object> props;
         Map<String, Metadata> rels;  // key == -[:%s {%s}]-> or -[:%s]-> or <-[:%s {%s}]-

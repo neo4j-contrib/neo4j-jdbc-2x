@@ -48,6 +48,6 @@ public class DriverQueries
             if (builder.length() > 0 ) builder.append( ", " );
             builder.append( property );
         }
-        return "MATCH (r:MetaDataRoot)-[:TYPE]->(type {type:{typeName}})<-[:IS_A]->(instance) " + builder;
+        return "MATCH (r:MetaDataRoot)-[:TYPE]->(type {type:{typeName}})<-[:IS_A]->(instance) RETURN " + builder;
     }
 }
