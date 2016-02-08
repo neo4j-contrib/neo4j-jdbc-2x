@@ -1,6 +1,6 @@
 == Neo4j JDBC driver ==
 
-image:https://travis-ci.org/neo4j-contrib/neo4j-jdbc.svg?branch=master["Build Status", link="https://travis-ci.org/neo4j-contrib/neo4j-jdbc"]
+image:https://travis-ci.org/neo4j-contrib/neo4j-jdbc.svg?branch=2.3["Build Status", link="https://travis-ci.org/neo4j-contrib/neo4j-jdbc"]
 
 This is a first attempt at creating a JDBC driver for the graph database Neo4j. While Neo4j is a graph database, and
 JDBC is based on the relational paradigm, this driver provides a way to bridge this gap.
@@ -14,7 +14,7 @@ The driver can be used in conjunction with
 * an existing Neo4j GraphDatabaseService instance passed to the driver
 * an temporary in-memory instance of Neo4j
 
-Here is a binary download of the http://m2.neo4j.org/content/groups/public/org/neo4j/neo4j-jdbc/2.3-SNAPSHOT/[Neo4j-2.3-SNAPSHOT Version]
+Here is a binary download of the https://m2.neo4j.org/content/repositories/releases/org/neo4j/neo4j-jdbc/2.3.2/neo4j-jdbc-2.3.2-jar-with-dependencies.jar[Neo4j-2.3.2 Version]
 
 === Minimum Viable Snippet ===
 
@@ -48,7 +48,7 @@ try(Statement stmt = con.createStatement())
     <dependency>
       <groupId>org.neo4j</groupId>
       <artifactId>neo4j-jdbc</artifactId>
-      <version>2.3-SNAPSHOT</version>
+      <version>2.3.2</version>
     </dependency>
 
     <!-- For file and in-memory support, add these two as well -->
@@ -75,10 +75,6 @@ try(Statement stmt = con.createStatement())
     <repository>
       <id>neo4j-public</id>
       <url>http://m2.neo4j.org/content/groups/public</url>
-      <releases>
-        <enabled>true</enabled>
-        <checksumPolicy>warn</checksumPolicy>
-      </releases>
     </repository>
   </repositories>
 </project>
