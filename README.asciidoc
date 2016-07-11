@@ -146,7 +146,7 @@ of those environments, and if so starts a "quirks mode", whereby those standard 
 
 One of the first tests I did with the driver was to connect to Neo4j using the DbVisualizer tool (www.dbvis.com/).
 
-image::http://raw.github.com/neo4j-contrib/neo4j-jdbc/2.0/src/docs/images/dbvisualizer1.png[DBViz]
+image::https://raw.githubusercontent.com/fbiville/neo4j-jdbc-2x/master/src/docs/images/dbvisualizer1.png[DBViz]
 
 Here is how you can try it out:
 
@@ -162,7 +162,7 @@ Use the "SQL Commander" to issue arbitrary Cypher queries to the Neo4j server.
 
 === Using with LibreOffice ===
 
-image::http://raw.github.com/neo4j-contrib/neo4j-jdbc/2.0/src/docs/images/libre-office.png[LibreOffice]
+image::https://raw.githubusercontent.com/fbiville/neo4j-jdbc-2x/master/src/docs/images/libre-office.png[LibreOffice]
 
 
 To use the driver with LibreOffice (should be similar with OpenOffice, not tested though), follow these steps:
