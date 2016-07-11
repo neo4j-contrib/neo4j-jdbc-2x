@@ -1,6 +1,6 @@
 == Legacy Neo4j JDBC driver ==
 
-image:https://api.travis-ci.org/neo4j-contrib/neo4j-jdbc-2x.svg?branch=master["Build Status", link="https://travis-ci.org/neo4j-contrib/neo4j-jdbc-2x"]
+image:https://api.travis-ci.org/fbiville/neo4j-jdbc-2x.svg?branch=master["Build Status", link="https://travis-ci.org/fbiville/neo4j-jdbc-2x"]
 
 This is the JDBC driver for the graph database Neo4j (version 2.x).
 While Neo4j is a graph database, and JDBC is based on the relational paradigm, this driver provides a way to bridge this gap.
