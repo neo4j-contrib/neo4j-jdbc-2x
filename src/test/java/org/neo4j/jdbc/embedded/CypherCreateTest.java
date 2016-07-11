@@ -18,17 +18,16 @@
  */
 package org.neo4j.jdbc.embedded;
 
-import java.util.Collections;
-
 import org.junit.Test;
-
+import org.neo4j.cypher.javacompat.ExecutionEngine;
+import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.helpers.collection.IteratorUtil;
-import org.neo4j.test.ImpermanentGraphDatabase;
 import org.neo4j.test.TestGraphDatabaseFactory;
+
+import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 
@@ -42,7 +41,8 @@ public class CypherCreateTest
     public void testCreateNodeWithParam() throws Exception
     {
         final GraphDatabaseService gdb = new TestGraphDatabaseFactory().newImpermanentDatabase();
-        Result result = gdb.execute( "create (n {name:{1}}) return id(n) as id", Collections.<String,
+        ExecutionEngine executionEngine = new ExecutionEngine(gdb);
+        ExecutionResult result = executionEngine.execute( "create (n {name:{1}}) return id(n) as id", Collections.<String,
                 Object>singletonMap( "1", "test" ) );
         Long id = IteratorUtil.single( result.<Long>columnAs( "id" ) );
         try ( Transaction tx = gdb.beginTx() )

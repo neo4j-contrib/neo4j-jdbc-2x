@@ -1,2 +1,15 @@
+sudo: false
 language: java
-jdk: oraclejdk7
+jdk:
+ - oraclejdk7
+ - oraclejdk8
+env:
+  matrix:
+    - NEO_VERSION=2.0.5
+    - NEO_VERSION=2.1.8
+    - NEO_VERSION=2.2.10
+      EXTRA_PROFILES=-Pwith-neo4j-io
+    - NEO_VERSION=2.3.5
+      EXTRA_PROFILES=-Pwith-neo4j-io
+install: true
+script: mvn clean test -Dneo4j.version=${NEO_VERSION} ${EXTRA_PROFILES}

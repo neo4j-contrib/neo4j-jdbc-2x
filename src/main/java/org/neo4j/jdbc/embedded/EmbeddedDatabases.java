@@ -18,13 +18,6 @@
  */
 package org.neo4j.jdbc.embedded;
 
-import java.io.File;
-import java.util.Map;
-import java.util.Properties;
-import java.util.WeakHashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.factory.GraphDatabaseBuilder;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
@@ -32,6 +25,12 @@ import org.neo4j.graphdb.factory.GraphDatabaseSettings;
 import org.neo4j.jdbc.Databases;
 import org.neo4j.jdbc.QueryExecutor;
 import org.neo4j.test.TestGraphDatabaseFactory;
+
+import java.util.Map;
+import java.util.Properties;
+import java.util.WeakHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author mh
@@ -65,7 +64,7 @@ public class EmbeddedDatabases implements Databases
                     GraphDatabaseBuilder builder = new GraphDatabaseBuilder(new GraphDatabaseBuilder.DatabaseCreator() {
                         @Override
                         public GraphDatabaseService newDatabase(Map<String, String> map) {
-                            return new GraphDatabaseFactory().newEmbeddedDatabase(new File(name));
+                            return new GraphDatabaseFactory().newEmbeddedDatabase(name);
                         }
                     });
 
