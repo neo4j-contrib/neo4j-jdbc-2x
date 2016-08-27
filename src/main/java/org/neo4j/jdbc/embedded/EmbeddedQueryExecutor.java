@@ -18,8 +18,9 @@
  */
 package org.neo4j.jdbc.embedded;
 
+import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Result;
+import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.helpers.Exceptions;
 import org.neo4j.helpers.collection.IteratorWrapper;
@@ -41,12 +42,14 @@ public class EmbeddedQueryExecutor implements QueryExecutor
 
 
     private final GraphDatabaseService gds;
+    private final ExecutionEngine executionEngine;
 
     ThreadLocal<Transaction> tx = new ThreadLocal<Transaction>();
 
     public EmbeddedQueryExecutor( GraphDatabaseService gds )
     {
         this.gds = gds;
+        this.executionEngine = new ExecutionEngine(gds);
     }
 
     @Override
@@ -55,15 +58,16 @@ public class EmbeddedQueryExecutor implements QueryExecutor
     {
         final Map<String, Object> params = parameters == null ? Collections.<String, Object>emptyMap() : parameters;
         begin();
-        final Result result = gds.execute( query, params );
+        final org.neo4j.cypher.javacompat.ExecutionResult result = executionEngine.execute( query, params );
         final List<String> columns = result.columns();
         final int cols = columns.size();
         final Object[] resultRow = new Object[cols];
-        if ( !result.hasNext() )
+        final ResourceIterator<Map<String, Object>> iterator = result.iterator();
+        if ( !iterator.hasNext())
         {
             commitIfAutoCommit( autoCommit );
         }
-        return new ExecutionResult( columns, new IteratorWrapper<Object[], Map<String, Object>>( result )
+        return new ExecutionResult( columns, new IteratorWrapper<Object[], Map<String, Object>>( iterator )
         {
             boolean closed = false;
 
@@ -99,7 +103,7 @@ public class EmbeddedQueryExecutor implements QueryExecutor
 
             public void close()
             {
-                result.close();
+                iterator.close();
                 closed = true;
                 commitIfAutoCommit( autoCommit );
             }

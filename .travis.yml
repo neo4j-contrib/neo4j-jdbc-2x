@@ -1,2 +1,17 @@
+sudo: false
 language: java
-jdk: oraclejdk7
+jdk:
+ - oraclejdk7
+ - oraclejdk8
+env:
+  matrix:
+    - NEO_VERSION=2.0.5
+    - NEO_VERSION=2.1.8
+    - NEO_VERSION=2.2.10
+      EXTRA_PROFILES=-Pwith-neo4j-io
+    - NEO_VERSION=2.3.6
+      EXTRA_PROFILES=-Pwith-neo4j-io
+install: true
+script: mvn clean test -Dneo4j.version=${NEO_VERSION} ${EXTRA_PROFILES}
+after_success:
+  - "[ ${TRAVIS_PULL_REQUEST} = 'false' ] && [ ${TRAVIS_BRANCH} = 'master' ] && mvn clean deploy -DskipTests --settings ./deploy-settings.xml"

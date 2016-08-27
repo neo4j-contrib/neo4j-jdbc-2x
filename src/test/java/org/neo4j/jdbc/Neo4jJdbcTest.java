@@ -25,6 +25,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.DynamicRelationshipType;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -37,9 +38,10 @@ import org.neo4j.test.TestGraphDatabaseFactory;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Properties;
+
+import static java.util.Arrays.asList;
 
 /**
  * @author mh
@@ -51,7 +53,6 @@ public abstract class Neo4jJdbcTest
 {
 
     private final Driver driver;
-
     protected static String nodeByIdQuery( long nodeId )
     {
         return "match (n) where id(n) = " + nodeId +
@@ -59,10 +60,12 @@ public abstract class Neo4jJdbcTest
     }
 
     protected Neo4jConnection conn;
+
     protected static GraphDatabaseService gdb;
+    private static ExecutionEngine executionEngine;
     private static CommunityNeoServer webServer;
     protected final Mode mode;
-    protected static Mode prev_mode;
+    private static Mode prev_mode;
     private Transaction tx;
 
     protected long createNode() throws SQLException
@@ -80,13 +83,18 @@ public abstract class Neo4jJdbcTest
     @Parameterized.Parameters
     public static Collection<Object[]> data()
     {
-        return Arrays.<Object[]>asList(new Object[]{Mode.embedded}, new Object[]{Mode.server_auth}, new Object[]{Mode.server});
+        return asList(
+            new Object[]{Mode.embedded},
+            new Object[]{Mode.server_auth},
+            new Object[]{Mode.server}
+        );
     }
 
     @BeforeClass
     public static void before()
     {
         gdb = new TestGraphDatabaseFactory().newImpermanentDatabase();
+        executionEngine = new ExecutionEngine(gdb);
     }
 
     public Neo4jJdbcTest( Mode mode ) throws SQLException
@@ -134,6 +142,7 @@ public abstract class Neo4jJdbcTest
     {
         if (gdb !=null ) { gdb.shutdown(); }
         gdb = webServer.getDatabase().getGraph();
+        executionEngine = new ExecutionEngine(gdb);
     }
 
 
@@ -156,7 +165,7 @@ public abstract class Neo4jJdbcTest
     }
 
     @Before
-    public void setUp() throws SQLException, Exception
+    public void setUp() throws Exception
     {
         cleanDatabase();
     }
@@ -228,7 +237,7 @@ public abstract class Neo4jJdbcTest
 
     private void cleanDatabase() {
         try (Transaction tx = gdb.beginTx()) {
-            gdb.execute("MATCH n DETACH DELETE n");
+            executionEngine.execute("MATCH n OPTIONAL MATCH n-[r]->() DELETE n,r");
             tx.success();
         }
     }

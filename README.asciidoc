@@ -1,11 +1,28 @@
-== Neo4j JDBC driver ==
+== Legacy Neo4j JDBC driver ==
 
-image:https://travis-ci.org/neo4j-contrib/neo4j-jdbc.svg?branch=2.3["Build Status", link="https://travis-ci.org/neo4j-contrib/neo4j-jdbc"]
+image:https://api.travis-ci.org/fbiville/neo4j-jdbc-2x.svg?branch=master["Build Status", link="https://travis-ci.org/fbiville/neo4j-jdbc-2x"]
 
-This is a first attempt at creating a JDBC driver for the graph database Neo4j. While Neo4j is a graph database, and
-JDBC is based on the relational paradigm, this driver provides a way to bridge this gap.
+This is the JDBC driver for the graph database Neo4j (version 2.x).
+While Neo4j is a graph database, and JDBC is based on the relational paradigm, this driver provides a way to bridge this gap.
 
-The textual representation of declarative queries in the Cypher query language which returns tabular results make it possible to use the JDBC concepts and APIs.
+For Neo4j v3 (supports also REST API of Neo4j v2), please use https://github.com/neo4j-contrib/neo4j-jdbc[the new JDBC driver].
+
+== Legacy vs current Neo4j JDBC driver matrix
+
+. Choice matrix
+[width="40%",frame="topbot",options="header,footer"]
+|=================================================================
+|Deployment type    |Supported by legacy?   |Supported by new?
+|Embedded 2.x       |Y                      |N
+|Embedded 3.x       |N                      |Planned
+|HTTP               |Y                      |Y
+|Bolt               |N                      |Y
+|=================================================================
+
+== Paradigm
+
+The textual representation of declarative queries in the Cypher query language which returns tabular results
+make it possible to use the JDBC concepts and APIs.
 
 The driver can be used in conjunction with
 
@@ -13,8 +30,6 @@ The driver can be used in conjunction with
 * a on disk Neo4j database
 * an existing Neo4j GraphDatabaseService instance passed to the driver
 * an temporary in-memory instance of Neo4j
-
-Here is a binary download of the https://m2.neo4j.org/content/repositories/releases/org/neo4j/neo4j-jdbc/2.3.2/neo4j-jdbc-2.3.2-jar-with-dependencies.jar[Neo4j-2.3.2 Version]
 
 === Minimum Viable Snippet ===
 
@@ -69,8 +84,8 @@ try(Statement stmt = con.createStatement())
       <version>2.3.2</version>
       <type>test-jar</type>
     </dependency>
-
   </dependencies>
+
   <repositories>
     <repository>
       <id>neo4j-public</id>
@@ -131,7 +146,7 @@ of those environments, and if so starts a "quirks mode", whereby those standard 
 
 One of the first tests I did with the driver was to connect to Neo4j using the DbVisualizer tool (www.dbvis.com/).
 
-image::http://raw.github.com/neo4j-contrib/neo4j-jdbc/2.0/src/docs/images/dbvisualizer1.png[DBViz]
+image::https://raw.githubusercontent.com/fbiville/neo4j-jdbc-2x/master/src/docs/images/dbvisualizer1.png[DBViz]
 
 Here is how you can try it out:
 
@@ -147,7 +162,7 @@ Use the "SQL Commander" to issue arbitrary Cypher queries to the Neo4j server.
 
 === Using with LibreOffice ===
 
-image::http://raw.github.com/neo4j-contrib/neo4j-jdbc/2.0/src/docs/images/libre-office.png[LibreOffice]
+image::https://raw.githubusercontent.com/fbiville/neo4j-jdbc-2x/master/src/docs/images/libre-office.png[LibreOffice]
 
 
 To use the driver with LibreOffice (should be similar with OpenOffice, not tested though), follow these steps:

@@ -22,8 +22,6 @@ import org.neo4j.server.CommunityNeoServer;
 import org.neo4j.server.helpers.CommunityServerBuilder;
 import org.neo4j.server.web.WebServer;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 
 /**

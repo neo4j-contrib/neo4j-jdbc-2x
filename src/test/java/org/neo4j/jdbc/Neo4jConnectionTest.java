@@ -18,28 +18,28 @@
  */
 package org.neo4j.jdbc;
 
+import org.hamcrest.CoreMatchers;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.DynamicRelationshipType;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.ResourceIterable;
+import org.neo4j.graphdb.Transaction;
+import org.neo4j.helpers.collection.IteratorUtil;
+import org.neo4j.tooling.GlobalGraphOperations;
+
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.DynamicLabel;
-import org.neo4j.graphdb.DynamicRelationshipType;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.Transaction;
-import org.neo4j.helpers.collection.IteratorUtil;
-import org.neo4j.tooling.GlobalGraphOperations;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.neo4j.graphdb.DynamicLabel.label;
 
 public class Neo4jConnectionTest extends Neo4jJdbcTest
 {
@@ -47,7 +47,6 @@ public class Neo4jConnectionTest extends Neo4jJdbcTest
     private String columName = "propName";
     private String tableName = "test";
     private String columnPrefix = "_";
-    private final String columnType = "String";
 
     public Neo4jConnectionTest( Mode mode ) throws SQLException
     {
@@ -70,7 +69,7 @@ public class Neo4jConnectionTest extends Neo4jJdbcTest
     public void setUp() throws Exception
     {
         super.setUp();
-        createTableMetaData( gdb, tableName, columName, columnType );
+        createTableMetaData( gdb, tableName, columName, "String");
     }
 
     @Test
@@ -78,8 +77,8 @@ public class Neo4jConnectionTest extends Neo4jJdbcTest
     {
         try ( Transaction tx = gdb.beginTx() )
         {
-            final Node root = IteratorUtil.single( gdb.findNodes( DynamicLabel
-                    .label( "MetaDataRoot" ) ) );
+            ResourceIterable<Node> nodes = GlobalGraphOperations.at(gdb).getAllNodesWithLabel(label("MetaDataRoot"));
+            final Node root = IteratorUtil.single(nodes);
             final Relationship typeRel = root.getSingleRelationship( DynamicRelationshipType.withName( "TYPE" ),
                     Direction.OUTGOING );
             final Node typeNode = typeRel.getEndNode();
