@@ -1,11 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.neo4j</groupId>
+
+    <groupId>net.biville.florent</groupId>
     <artifactId>neo4j-jdbc</artifactId>
     <version>2.3-SNAPSHOT</version>
     <name>Neo4j JDBC Driver</name>
-    <description>Neo4j JDBC Driver</description>
-    <url>http://github.com/neo4j-contrib/neo4j-jdbc</url>
+
+    <description>Legacy Neo4j JDBC Driver</description>
+    <url>http://github.com/fbiville/neo4j-jdbc-2x</url>
 
     <properties>
         <encoding>UTF-8</encoding>
@@ -21,18 +23,19 @@
 
     <packaging>jar</packaging>
 
-    <organization>
-        <name>Neo Technology, Inc.</name>
-        <url>http://neotechnology.com/</url>
-    </organization>
     <developers>
         <developer>
-            <id>neo-technology</id>
+            <id>fbiville</id>
+            <name>Florent Biville</name>
+            <email>florent.biville@gmail.com</email>
+            <roles>
+                <role>developer</role>
+            </roles>
         </developer>
     </developers>
 
     <scm>
-        <url>https://github.com/neo4j-contrib/neo4j-jdbc</url>
+        <url>https://github.com/fbiville/neo4j-jdbc-2x</url>
     </scm>
 
     <licenses>
@@ -54,10 +57,6 @@
             <name>Public online Restlet repository</name>
             <url>http://maven.restlet.org</url>
         </repository>
-        <repository>
-            <id>neo4j</id>
-            <url>http://m2.neo4j.org/content/groups/public</url>
-        </repository>
     </repositories>
 
     <dependencies>
@@ -71,11 +70,6 @@
             <artifactId>org.restlet.ext.httpclient</artifactId>
             <version>2.2.2</version>
         </dependency>
-        <!--dependency>
-            <groupId>org.neo4j</groupId>
-            <artifactId>neo4j-cypher-dsl</artifactId>
-            <version>2.3-SNAPSHOT</version>
-        </dependency-->
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-core-asl</artifactId>
@@ -239,11 +233,13 @@
     </profiles>
 
     <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
         <repository>
-            <id>releases@repo.neo4j.org</id>
-            <name>releases@repo.neo4j.org</name>
-            <uniqueVersion>false</uniqueVersion>
-            <url>http://m2.neo4j.org/content/repositories/releases</url>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
 
