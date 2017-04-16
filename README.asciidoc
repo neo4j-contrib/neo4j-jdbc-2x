@@ -119,6 +119,37 @@ the instance to the type node via the IS_A relationship. By using this structure
 * For each property node, set property "name" and "type". "type" should be "String" for now
 * Add as many instance nodes as you want, with the defined properties, and relate them to their
   type node with the IS_A relationship
+  
+==== Example of MetaData-Setup ====
+
+-----------------------------------------------------------------------------
+
+begin
+create (_0:`MetaDataRoot`)
+
+create (_1 {type:"Person"})
+create (_2 {name:"name"})
+
+create (_3 {type:"Book"})
+create (_4 {name:"title"})
+
+create _0-[:`TYPE`]->_1
+create _1-[:`HAS_PROPERTY`]->_2
+
+create _0-[:`TYPE`]->_3
+create _3-[:`HAS_PROPERTY`]->_4
+
+create (_5:`Person` {name:"Anders"})
+create (_5-[:`IS_A`]->_1)
+
+create (_6:`Book` {title: "Graph modeling"})
+create (_6-[:`IS_A`]->_3)
+
+;
+commit
+
+-----------------------------------------------------------------------------
+
 
 === Quirks modes ===
 
@@ -137,8 +168,9 @@ Here is how you can try it out:
 * Add the JDBC driver jar as a Neo4j driver in the Driver Manager.
 * Add a connection to your database
 * Under "Connection properties", change "SQL Statements" as follows:
-** +SELECT ALL: start n=node(0) match (n)-[:TYPE]->(type)<-[:IS_A]-(instance) return *+ .
-** +SELECT COUNT: start n=node(0) match (n)-[:TYPE]->(type)<-[:IS_A]-(instance) return count(instance)+
+** SELECT ALL: +start n=node(0) match (n)-[:TYPE]->(type {type:$$TABLE$$})<-[:IS_A]-(instance) return instance 
++
+** SELECT COUNT: +start n=node(0) match (n)-[:TYPE]->(type {type:$$TABLE$$})<-[:IS_A]-(instance) return count(instance)+
 
 Now you should be able to browse the type nodes as tables and the nodes of those types as rows.
 Use the "SQL Commander" to issue arbitrary Cypher queries to the Neo4j server.
